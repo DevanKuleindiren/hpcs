@@ -2,9 +2,9 @@
 #
 #! sbatch directives begin here ###############################
 #! Name of the job:
-#SBATCH -J theano
+#SBATCH -J language_modelling
 #! Which project should be charged (NB Wilkes projects end in '-GPU'):
-##SBATCH -A INSERT-PROJECT-CODE-HERE
+##SBATCH -A COMPUTERLAB-SL2-GPU
 #! How many whole nodes should be allocated?
 #SBATCH --nodes=1
 #! How many (MPI) tasks will there be in total? (<=nodes*12)
@@ -60,30 +60,14 @@ workdir="$SLURM_SUBMIT_DIR"  # The value of SLURM_SUBMIT_DIR sets workdir to the
                              # in which sbatch is run.
 cd $workdir
 
-if [ $cluster_type == "cpu" ]; then
-	source /home/mr472/virtualenv-cpu/bin/activate;
-elif [ $cluster_type == "gpu" ]; then
-	source /home/mr472/virtualenv-theano/bin/activate;
-fi;
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:$CUDA_INSTALL_PATH/lib64;
-export PYTHONPATH=$PYTHONPATH:/home/mr472/Projects/neural-utils
 
 i=0;
 for configfile in "$@"; do
 	configprefix="${configfile%.*}"
-	if [ $cluster_type == "cpu" ]; then
-		export THEANO_FLAGS="cuda.root=/usr/local/cuda,device=cpu,floatX=float32,optimizer_excluding=conv_dnn,dnn.conv.algo_bwd_data=deterministic";
-	elif [ $cluster_type == "gpu" ]; then
-		export THEANO_FLAGS="cuda.root=$CUDA_INSTALL_PATH,device=gpu$i,floatX=float32,optimizer_excluding=conv_dnn,dnn.conv.algo_bwd_data=deterministic";
-	else
-		echo "Need to choose cluster type";
-		exit;
-	fi;
 
 	srun --exclusive -N1 -n1 python -u $script_path $configfile > $configprefix.log 2> $configprefix.err &
 	i=$(($i + 1));
 done;
 wait;
-
-deactivate; # close virtualenv
-

@@ -15,10 +15,10 @@ gpu_job_limit=2;
 
 if [ $cluster_type == "cpu" ]; then
 	job_limit=$cpu_job_limit;
-	sbatch_arguments="-p sandybridge -A INSERT-PROJECT-CODE-HERE";
+	sbatch_arguments="-p sandybridge -A COMPUTERLAB-SL2";
 elif [ $cluster_type == "gpu" ]; then
 	job_limit=$gpu_job_limit;
-	sbatch_arguments="-p tesla -A INSERT-PROJECT-CODE-HERE-GPU"; # --gpu_compute_mode=3";
+	sbatch_arguments="-p tesla -A COMPUTERLAB-SL2-GPU"; # --gpu_compute_mode=3";
 else
 	echo "Need to choose cluster type";
 	exit;
@@ -35,6 +35,6 @@ for i in $(seq 1 $job_limit $#); do
 		fi;
 	done;
 
-	echo "sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/mr472/Projects/hpc/slurm_submit $cluster_type $script_path $config_list";
-	sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/mr472/Projects/hpc/slurm_submit $cluster_type $script_path $config_list;
+	echo "sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/dk503/proj/slurm_submit $cluster_type $script_path $config_list";
+	sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/dk503/proj/slurm_submit $cluster_type $script_path $config_list;
 done;
