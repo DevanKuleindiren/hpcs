@@ -1,6 +1,6 @@
 import sys
 
-def main(_):
+def main():
     print "I WORKED!"
     print 'Number of arguments:', len(sys.argv), 'arguments.'
     print 'Argument List:', str(sys.argv)
