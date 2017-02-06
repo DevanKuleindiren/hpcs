@@ -35,6 +35,6 @@ for i in $(seq 1 $job_limit $#); do
 		fi;
 	done;
 
-	echo "sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/dk503/proj/slurm_submit $cluster_type $script_path $config_list";
-	sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/dk503/proj/slurm_submit $cluster_type $script_path $config_list;
+	echo "sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/dk503/proj/hpcs/slurm_submit $cluster_type $script_path $config_list";
+	sbatch $sbatch_arguments --time=$time_limit --ntasks=$config_count /home/dk503/proj/hpcs/slurm_submit $cluster_type $script_path $config_list;
 done;
