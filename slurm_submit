@@ -47,13 +47,17 @@ else
 fi;
 
 
-if [ $cluster_type == "cpu" ]; then
-	module load python/2.7.5
-fi;
-module unload cuda
-module load cuda/7.0
 module load gcc/4.8.1
 module load git/2.0.0
+module swap cuda cuda/8.0
+module load cudnn/5.1_cuda-8.0
+module load python/2.7.10
+
+if [ $cluster_type == "cpu" ]; then
+	source /home/dk503/.venv/tensorflow_cpu/bin/activate;
+elif [ $cluster_type == "gpu" ]; then
+	source /home/dk503/.venv/tensorflow/bin/activate;
+fi;
 
 #! Work directory (i.e. where the job will run):
 workdir="$SLURM_SUBMIT_DIR"  # The value of SLURM_SUBMIT_DIR sets workdir to the directory
@@ -66,8 +70,10 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:$CUDA_INSTALL_PATH/lib64;
 i=0;
 for configfile in "$@"; do
 	configprefix="${configfile%.*}"
+	configargs=$(cat $configfile)
 
-	srun --exclusive -N1 -n1 python -u $script_path $configfile > $configprefix.log 2> $configprefix.err &
+	echo "srun --exclusive -N1 -n1 python -u $script_path $configargs > $configprefix.log 2> $configprefix.err &"
+	srun --exclusive -N1 -n1 python -u $script_path $configargs > $configprefix.log 2> $configprefix.err &
 	i=$(($i + 1));
 done;
 wait;
